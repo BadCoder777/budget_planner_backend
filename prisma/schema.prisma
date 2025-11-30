@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String   @unique @id @default(uuid())
+  telegramId       String   @unique @map("telegram_id")
+  telegramUsername String   @map("telegram_username")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+}
+
+model Budget {
+  id        String     @unique @id @default(uuid())
+  name      String
+  userId    String     @map("user_id")
+  type      BudgetType
+  amount    Float
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+}
+
+model BudgetMember {
+  id        String           @unique @id @default(uuid())
+  budgetId  String           @map("budget_id")
+  userId    String           @map("user_id")
+  role      BudgetMemberRole
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+}
+
+model Category {
+  id        String   @unique @id @default(uuid())
+  budgetId  String   @map("budget_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Transaction {
+  id         String          @unique @id @default(uuid())
+  budgetId   String          @map("budget_id")
+  categoryId String          @map("category_id")
+  userId     String          @map("user_id")
+  amount     Float
+  type       TransactionType
+  comment    String?
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+}
+
+model BudgetLimit {
+  id         String      @unique @id @default(uuid())
+  budgetId   String      @map("budget_id")
+  categoryId String      @map("category_id")
+  amount     Float
+  period     LimitPeriod
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+}
+
+model BudgetSettings {
+  id              String   @unique @id @default(uuid())
+  budgetId        String   @map("budget_id")
+  currency        String
+  notificationsOn Boolean  @map("notifications_on") @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+}
+
+enum BudgetType {
+  PERSONAL
+  SHARED
+  TEMPORARY
+}
+
+enum BudgetMemberRole {
+  ADMIN
+  VIEWER
+  EDITOR
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum LimitPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
