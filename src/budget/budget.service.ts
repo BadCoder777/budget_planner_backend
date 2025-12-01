@@ -38,7 +38,7 @@ export class BudgetService {
   }
 
   async getAllBudget() {
-    return await this.prisma.budget.findMany();
+    return this.prisma.budget.findMany();
   }
 
   async getBudgetById(id) {
